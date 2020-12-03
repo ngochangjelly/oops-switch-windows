@@ -8,10 +8,36 @@
  * @version        -
  * 
  */
+var vis = (function(){
+    var stateKey, eventKey, keys = {
+        hidden: "visibilitychange",
+        webkitHidden: "webkitvisibilitychange",
+        mozHidden: "mozvisibilitychange",
+        msHidden: "msvisibilitychange"
+    };
+    for (stateKey in keys) {
+        if (stateKey in document) {
+            eventKey = keys[stateKey];
+            break;
+        }
+    }
+    return function(c) {
+        if (c) document.addEventListener(eventKey, c);
+        return !document[stateKey];
+    }
+})();
+
+let checkIsStreamActive = function(stream) {
+	return stream.getTracks().length > 0
+}
+
+var disableButton = function(check) {
+	document.getElementById("start-stream").style.display = check ? "none" : "block"
+	document.getElementById("stop-stream").style.display = !check ? "none" : "block"
+}
 
 ;(function(App) {
 	
-	"use strict";
 	
 	/*
 	 * Creates a new web cam capture.
@@ -47,8 +73,19 @@
 					webCamWindow.style.width = width + 'px';
 					webCamWindow.style.height = height + 'px';
 					startStream();
+					
+					// global window events
+					window.onkeyup = function(e){
+						if(e.enterKey){
+							startStream()
+						}
+					}
+					document.getElementById("stop-stream").addEventListener("click", stopStream)
+					document.getElementById("start-stream").addEventListener("click", startStream)
+					vis(function(){
+						 vis() ? startStream() : stopStream();
+					});
 				}
-				
 			} else {
 				alert('No support found');
 			}
@@ -60,6 +97,21 @@
 		 * @return void.
 		 *
 		 */
+		function stopStream() {
+			(navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia).call(
+				navigator, 
+				{video: true}, 
+				function(localMediaStream) {
+					const tracks = localMediaStream.getTracks();
+					tracks[0].stop()
+					webCamWindow.srcObject = null;
+					webCamWindow.style.backgroundColor ='black'
+					document.getElementById("movement").style.display ='none'
+					disableButton(false)
+				}, 
+				console.error
+			);
+		}
 		function startStream() {
 			(navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia).call(
 				navigator, 
@@ -79,6 +131,8 @@
 							}
 						}
 					}
+					// display disable stream button
+					disableButton(true)
 				}, 
 				console.error
 			);
@@ -89,21 +143,6 @@
 		 * @return void.
 		 *
 		 */
-		function stopStream() {
-			console.log('***************   ')
-			(navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia).call(
-				navigator, 
-				{video: true}, 
-				function(localMediaStream) {
-					if(webCamWindow) {
-						localMediaStream.stop();
-						webCamWindow.src = null;
-						
-					}
-				}, 
-				console.error
-			);
-		}
 
 		/*
 		 * Captures a still image from the video.
@@ -160,8 +199,7 @@
 		return {
 			setSize: setSize,
 			hasSupport: hasSupport,
-			captureImage: captureImage,
-			stopStream: stopStream
+			captureImage: captureImage
 		};
 
 	}

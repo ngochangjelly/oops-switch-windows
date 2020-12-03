@@ -3,12 +3,14 @@
 	<head>
 		<title>Webcam motion detection</title>
 		<link rel="stylesheet" type="text/css" href="styles/main.css" media="all">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous" />
 	</head>
 	<body>
 		<video id="webCamWindow" autoplay></video>
 		<div id="movement"></div>
-		<button id="stop-stream" onclick="stopStream()">Stop webcam</button>
-		
+		<button id="stop-stream"><i class="fas fa-video-slash"></i></button>
+		<button id="start-stream"><i class="fas fa-video"></i></button>
+	
 		<script type="text/javascript" src="js/global.js"></script>
 		<script type="text/javascript" src="js/MotionDetector/WebCamCapture.js"></script>
 		<script type="text/javascript" src="js/MotionDetector/ImageCompare.js"></script>
