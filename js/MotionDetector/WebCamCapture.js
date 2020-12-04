@@ -83,7 +83,7 @@ var disableButton = function(check) {
 					document.getElementById("stop-stream").addEventListener("click", stopStream)
 					document.getElementById("start-stream").addEventListener("click", startStream)
 					vis(function(){
-						 vis() ? startStream() : stopStream();
+						 vis() ? initialize(videoElement) : stopStream();
 					});
 				}
 			} else {
