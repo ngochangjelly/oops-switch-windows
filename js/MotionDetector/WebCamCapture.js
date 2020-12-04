@@ -126,6 +126,9 @@ var disableButton = function(check) {
 						} else {
 							try {
 								webCamWindow.srcObject = localMediaStream;
+								if(document.getElementById("movement").style.display === 'none') {
+									document.getElementById("movement").style.display ='block'
+								}
 							} catch (error) {
 								webCamWindow.src = vendorURL.createObjectURL(localMediaStream);
 							}
